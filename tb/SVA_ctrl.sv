@@ -68,7 +68,12 @@ module SVA_ctrl (
   input							rfe,
   input							except_illegal,
   input  						dc_no_writethrough,
-  input							du_flush_pipe
+  input							du_flush_pipe, 
+  // Internal wires and regs
+  input [`OR1200_REGFILE_ADDR_WIDTH-1:0]		wb_rfaddrw,
+  input							sel_imm,
+  input                        	        		ex_delayslot_dsi,
+  input                                	     		ex_delayslot_nop
 );
 
 //Instructions in EX stage
@@ -114,6 +119,19 @@ bind or1200_ctrl SVA_ctrl wrp (
   .wb_insn(wb_insn),
   .id_branch_addrtarget(id_branch_addrtarget),
   .ex_branch_addrtarget(ex_branch_addrtarget),
+  .sel_a(sel_a),
+  .sel_b(sel_b),
+  .id_lsu_op(id_lsu_op),
+  .comp_op(comp_op),
+  .multicycle(multicycle),
+  .wait_on(wait_on),
+  .cust5_op(cust5_op),
+  .cust5_limm(cust5_limm),
+  .id_pc(id_pc),
+  .ex_pc(ex_pc),
+  .id_simm(id_simm),
+  .ex_simm(ex_simm),
+  .wbforw_valid(wbforw_valid),
   .du_hwbkpt(du_hwbkpt),
   .sig_syscall(sig_syscall),
   .sig_trap(sig_trap),
@@ -129,7 +147,13 @@ bind or1200_ctrl SVA_ctrl wrp (
   .rfe(rfe),
   .except_illegal(except_illegal),
   .dc_no_writethrough(dc_no_writethrough),
-  .du_flush_pipe(du_flush_pipe)
+  .du_flush_pipe(du_flush_pipe),
+
+  // Internal wires and regs
+  .wb_rfaddrw(wb_rfaddrw),
+  .sel_imm(sel_imm),
+  .ex_delayslot_dsi(ex_delayslot_dsi),
+  .ex_delayslot_nop(ex_delayslot_nop)
 );
 
 endmodule
