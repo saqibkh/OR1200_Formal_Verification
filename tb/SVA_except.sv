@@ -13,7 +13,7 @@ module SVA_except (
   input [31:0] epcr, 
   input [31:0] wb_pc, 
   input [31:0] ex_pc, 
-  input ex_dslot, delayed1_ex_dslot, 
+  input ex_dslot, delayed1_ex_dslot, delayed2_ex_dslot,
   input [31:0] dl_pc, 
   input [31:0] id_pc,
   input [3:0] except_type,
@@ -93,142 +93,145 @@ endsequence
 property priority_check1;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[1]) |-> ##1 (acc_except_1);
 endproperty
-assert property (priority_check1);
+assert_priority_check1: assert property (priority_check1);
 
 property priority_check2;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[2]) |-> ##1 (acc_except_2);
 endproperty
-assert property (priority_check2);
+assert_priority_check2: assert property (priority_check2);
 
 property priority_check3;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[3]) |-> ##1 (acc_except_3);
 endproperty
-assert property (priority_check3);
+assert_priority_check3: assert property (priority_check3);
 
 property priority_check4;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[5]) |-> ##1 (acc_except_4);
 endproperty
-assert property (priority_check4);
+assert_priority_check4: assert property (priority_check4);
 
 property priority_check5;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[6]) |-> ##1 (acc_except_5);
 endproperty
-assert property (priority_check5);
+assert_priority_check5: assert property (priority_check5);
 
 property priority_check6;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[7]) |-> ##1 (acc_except_6);
 endproperty
-assert property (priority_check6);
+assert_priority_check6: assert property (priority_check6);
 
 property priority_check7;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[8]) |-> ##1 (acc_except_7);
 endproperty
-assert property (priority_check7);
+assert_priority_check7: assert property (priority_check7);
 
 property priority_check8;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[9]) |-> ##1 (acc_except_8);
 endproperty
-assert property (priority_check8);
+assert_priority_check8: assert property (priority_check8);
 
 property priority_check9;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[10]) |-> ##1 (acc_except_9);
 endproperty
-assert property (priority_check9);
+assert_priority_check9: assert property (priority_check9);
 
 property priority_check10;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[12]) |-> ##1 (acc_except_10);
 endproperty
-assert property (priority_check10);
+assert_priority_check10: assert property (priority_check10);
 
 property priority_check11;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[13]) |-> ##1 (acc_except_11);
 endproperty
-assert property (priority_check11);
+assert_priority_check11: assert property (priority_check11);
 
-
-assert property (@(negedge reset) reset |=> (state == OR1200_EXCEPTFSM_IDLE));
+property reset_state;
+@(negedge reset) reset |=> (state == OR1200_EXCEPTFSM_IDLE);
+endproperty
+//assert_check_reset_FSM_IDLE: assert property (reset_state);
 
 // state transition for except module
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_IDLE), 
+assert_property_FSM_IDLE_FLU1: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_IDLE), 
 		(except_flushpipe || pc_we), (state == OR1200_EXCEPTFSM_FLU1)));
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU1), 
+assert_property_FSM_FLU1_FLU2: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU1), 
 	(icpu_ack_i || icpu_err_i || genpc_freeze), (state == OR1200_EXCEPTFSM_FLU2)));
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU2), 
+assert_property_FSM_FLU2_IDLE: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU2), 
 		(except_type == OR1200_EXCEPT_TRAP), (state == OR1200_EXCEPTFSM_IDLE)));
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU2), 
+assert_property_FSM_FLU2_FLU3: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU2), 
 		!(except_type == OR1200_EXCEPT_TRAP), (state == OR1200_EXCEPTFSM_FLU3)));
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU3), 
+assert_property_FSM_FLU3_FLU4: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU3), 
 		1, (state == OR1200_EXCEPTFSM_FLU4)));
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU4), 
+assert_property_FSM_FLU4_FLU5: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU4), 
 		1, (state == OR1200_EXCEPTFSM_FLU5)));
 
-assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU5), 
+assert_property_FSM_FLU5_IDLE: assert property (FSMValidTransition(clk, (state == OR1200_EXCEPTFSM_FLU5), 
 		(!if_stall && !id_freeze), (state == OR1200_EXCEPTFSM_IDLE)));
 
 property reset_epcr;
 @(negedge reset) reset |=> (epcr == 0);
 endproperty
-assert property (reset_epcr);
+//assert_property_reset_epcr: assert property (reset_epcr);
 
 property except_handler_1;
-@(posedge clk) disable iff (reset)
-($rose(except_type == OR1200_EXCEPT_ITLBMISS) || $rose(except_type == OR1200_EXCEPT_ILLEGAL) || $rose(OR1200_EXCEPT_ALIGN))
- |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && (epcr == $past(ex_pc))));
+  @(posedge clk) disable iff (reset) ($rose(except_type == OR1200_EXCEPT_ITLBMISS) || $rose(except_type == OR1200_EXCEPT_ILLEGAL) || $rose(OR1200_EXCEPT_ALIGN)) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && (epcr == $past(ex_pc))));
 endproperty
-assert property (except_handler_1);
+assert_property_handler_1: assert property (except_handler_1);
 
 property except_ipf;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_IPF) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && (epcr == $past(id_pc)))));
 endproperty
-assert property (except_ipf);
+assert_property_except_ipf: assert property (except_ipf);
 
 property except_buserr;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_BUSERR) |-> ((!$past(ex_dslot) && $past(delayed1_ex_dslot) && (epcr == $past(dl_pc))) || 
 	(!$past(ex_dslot) && !$past(delayed1_ex_dslot) && (epcr == $past(ex_pc))) || ($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && (epcr == $past(ex_pc)))));
 endproperty
-assert property (except_buserr);
+assert_property_except_buserr: assert property (except_buserr);
 
 property except_dtlbmiss_dpf;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_DTLBMISS) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && $past(delayed1_ex_dslot) && (epcr == $past(dl_pc)))
 	|| (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && (epcr == $past(ex_pc)))));
 endproperty
-assert property (except_dtlbmiss_dpf);
+assert_property_except_dtlbmiss_dpf: assert property (except_dtlbmiss_dpf);
 
 property except_trap;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_TRAP) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && $past(delayed1_ex_dslot) && (epcr == $past(id_pc)))
 	|| (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && (epcr == $past(ex_pc)))));
 endproperty
-assert property (except_trap);
+assert_property_except_trap: assert property (except_trap);
 
 property except_syscall;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_SYSCALL) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && (epcr == $past(id_pc)))));
 endproperty
-assert property (except_syscall);
+assert_property_except_syscall: assert property (except_syscall);
 
 property except_range;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_RANGE) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && $past(delayed1_ex_dslot) && (epcr == $past(dl_pc)))
-	|| (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && (epcr == $past(ex_pc)))));
+	|| (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && $past(delayed2_ex_dslot) && (epcr == $past(id_pc))) || (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && !$past(delayed2_ex_dslot) && (epcr == $past(ex_pc)))));
 endproperty
-assert property (except_range);
+
+assert_property_except_range: assert property (except_range);
+
+
+
 
 property except_handler_2;
 @(posedge clk) disable iff (reset)
 ($rose(except_type == OR1200_EXCEPT_FLOAT) || $rose(except_type == OR1200_EXCEPT_INT) || $rose(except_type == OR1200_EXCEPT_TICK) |-> (epcr == $past(id_pc)));
 endproperty
-
-assert property (except_handler_2);
+assert_property_except_handler_2: assert property (except_handler_2);
 
 endmodule
 
@@ -249,7 +252,8 @@ bind or1200_except SVA_except wrp(
 	.ex_pc(ex_pc),
 	.ex_dslot(ex_dslot),
 	.delayed1_ex_dslot(delayed1_ex_dslot),
-	.dl_pc(dl_pc),
+	.delayed2_ex_dslot(delayed2_ex_dslot),
+        .dl_pc(dl_pc),
 	.id_pc(id_pc),
 	.except_type(except_type),
 	.except_trig(except_trig),
