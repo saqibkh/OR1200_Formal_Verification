@@ -221,11 +221,7 @@ property except_range;
 ($rose(except_type == OR1200_EXCEPT_RANGE) |-> (($past(ex_dslot) && (epcr == $past(wb_pc))) || (!$past(ex_dslot) && $past(delayed1_ex_dslot) && (epcr == $past(dl_pc)))
 	|| (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && $past(delayed2_ex_dslot) && (epcr == $past(id_pc))) || (!$past(ex_dslot) && !$past(delayed1_ex_dslot) && !$past(delayed2_ex_dslot) && (epcr == $past(ex_pc)))));
 endproperty
-
 assert_property_except_range: assert property (except_range);
-
-
-
 
 property except_handler_2;
 @(posedge clk) disable iff (reset)
@@ -233,6 +229,20 @@ property except_handler_2;
 endproperty
 assert_property_except_handler_2: assert property (except_handler_2);
 
+cover_EXCEPT_TRAP: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_TRAP));
+cover_EXCEPT_FLOAT: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_FLOAT));
+cover_EXCEPT_SYSCALL: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_SYSCALL));
+cover_EXCEPT_RANGE: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_RANGE));
+cover_EXCEPT_ITLBMISS: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_ITLBMISS));
+cover_EXCEPT_DTLBMISS: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_DTLBMISS));
+cover_EXCEPT_INT: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_INT));
+cover_EXCEPT_ILLEGAL: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_ILLEGAL));
+cover_EXCEPT_ALIGN: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_ALIGN));
+cover_EXCEPT_TICK: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_TICK));
+cover_EXCEPT_IPF: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_IPF));
+cover_EXCEPT_DPF: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_DPF));
+cover_EXCEPT_BUSERR: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_BUSERR));
+cover_EXCEPT_NONE: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_NONE));
 endmodule
 
 module except_assert;
