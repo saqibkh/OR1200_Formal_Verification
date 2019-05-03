@@ -1,5 +1,5 @@
 /*
- * This file holds the assertions for or1200_dc_fsm
+ * This file holds the assertions for or1200_operandmuxes
  * Author: Saqib Khan
  */
 
@@ -12,75 +12,61 @@ module SVA_operandmuxes (
   input [31:0] ex_forw, wb_forw, simm, rf_dataa, rf_datab,
   input [31:0] operand_a, operand_b,
   input [1:0] sel_a,
-  input [1:0] sel_b
+  input [1:0] sel_b,
+  input saved_a, saved_b,
+  input [32-1:0] muxed_a,
+  input [32-1:0] muxed_b
 );
 
 // operand_a related assertions
-property reset_operand_a;
-@(posedge clk) reset |=> (!operand_a);
-endproperty
-assert property (reset_operand_a);
+//property reset_operand_a;
+//@(posedge clk) reset |=> (!operand_a);
+//endproperty
+//assert_property_reset_operand_a: assert property (reset_operand_a);
 
 // no freezing, rising edge or falling edge of the input data
-
 property forward_operand_a1;
-@(posedge clk) disable iff(reset)
-	$rose(!ex_freeze && !id_freeze)
-	##1 (!ex_freeze && !id_freeze && sel_a == 2'd2 && $stable(ex_forw) && $stable(sel_a)) |-> operand_a == ex_forw;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 (!ex_freeze && !id_freeze && sel_a == 2'd2 && $stable(ex_forw) && $stable(sel_a)) |-> muxed_a == ex_forw;
 endproperty
-assert property (forward_operand_a1);
+assert_property_forward_operand_a1: assert property (forward_operand_a1);
 
 property forward_operand_a2;
-@(posedge clk) disable iff(reset)
-	$rose(!ex_freeze && !id_freeze)
-	##1 (!ex_freeze && !id_freeze && sel_a == 2'd3 && $stable(wb_forw) && $stable(sel_a)) |-> operand_a == wb_forw;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 (!ex_freeze && !id_freeze && sel_a == 2'd3 && $stable(wb_forw) && $stable(sel_a)) |-> muxed_a == wb_forw;
 endproperty
-assert property (forward_operand_a2);
+assert_property_forward_operand_a2: assert property (forward_operand_a2);
 
 property forward_operand_a3;
-@(posedge clk) disable iff(reset)
-	 $rose(!ex_freeze && !id_freeze) 
-	 ##1 ( !ex_freeze && !id_freeze & !(sel_a == 2'd2 || sel_a == 2'd3) && $stable(rf_dataa) && $stable(sel_a) && !$isunknown(operand_a) ) 
-	|-> operand_a == rf_dataa;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 ( !ex_freeze && !id_freeze & !(sel_a == 2'd2 || sel_a == 2'd3) && $stable(rf_dataa) && $stable(sel_a) && !$isunknown(operand_a) ) |-> muxed_a == rf_dataa;
 endproperty
-assert property (forward_operand_a3);
+assert_property_forward_operand_a3: assert property (forward_operand_a3);
 
   
 // operand_b related assertions
-property reset_operand_b;
-@(posedge clk) reset |=> (!operand_b);
-endproperty
-assert property (reset_operand_b);
+//property reset_operand_b;
+//@(posedge clk) reset |=> (!operand_b);
+//endproperty
+//assert_property_reset_operand_b: assert property (reset_operand_b);
 
 // no freezing, rising edge or falling edge of the input data
 property forward_operand_b1;
-@(posedge clk) disable iff(reset)
-  $rose(!ex_freeze && !id_freeze)
-  ##1 (!ex_freeze && !id_freeze && sel_b == 2'd1 && $stable(simm) && $stable(sel_b)) |->  operand_b == simm;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 (!ex_freeze && !id_freeze && sel_b == 2'd1 && $stable(simm) && $stable(sel_b)) |->  muxed_b == simm;
 endproperty
-assert property (forward_operand_b1);
+assert_property_forward_operand_b1: assert property (forward_operand_b1);
 
 property forward_operand_b2;
-@(posedge clk) disable iff(reset)
-	$rose(!ex_freeze && !id_freeze)
-	##1 (!ex_freeze && !id_freeze && sel_b == 2'd2 && $stable(ex_forw) && $stable(sel_b)) |-> operand_b == ex_forw;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 (!ex_freeze && !id_freeze && sel_b == 2'd2 && $stable(ex_forw) && $stable(sel_b)) |-> muxed_b == ex_forw;
 endproperty
-assert property (forward_operand_b2);
+assert_property_forward_operand_b2: assert property (forward_operand_b2);
 
 property forward_operand_b3;
-@(posedge clk) disable iff(reset)
-	$rose(!ex_freeze && !id_freeze)
-	##1 (!ex_freeze && !id_freeze && sel_b == 2'd3 && $stable(wb_forw) && $stable(sel_b)) |-> operand_b == wb_forw;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 (!ex_freeze && !id_freeze && sel_b == 2'd3 && $stable(wb_forw) && $stable(sel_b)) |-> muxed_b == wb_forw;
 endproperty
-assert property (forward_operand_b3);
+assert_property_forward_operand_b3: assert property (forward_operand_b3);
 
 property forward_operand_b4;
-@(posedge clk) disable iff(reset)
- 	$rose(!ex_freeze && !id_freeze) 
-  ##1 (!ex_freeze && !id_freeze && !(sel_b == 2'd1 || sel_b == 2'd2 || sel_b == 2'd3) && $stable(rf_datab) && $stable(sel_b)) 
-  |-> operand_b == rf_datab;
+@(posedge clk) disable iff(reset) $rose(!ex_freeze && !id_freeze) ##1 (!ex_freeze && !id_freeze && !(sel_b == 2'd1 || sel_b == 2'd2 || sel_b == 2'd3) && $stable(rf_datab) && $stable(sel_b)) |-> muxed_b == rf_datab;
 endproperty
-assert property (forward_operand_b4);
+assert_property_forward_operand_b4: assert property (forward_operand_b4);
 
 endmodule
 
@@ -99,7 +85,11 @@ bind or1200_operandmuxes SVA_operandmuxes wrp (
   .operand_a(operand_a),
   .operand_b(operand_b),
   .sel_a(sel_a),
-  .sel_b(sel_b)
+  .sel_b(sel_b),
+  .saved_a(saved_a),
+  .saved_b(saved_b),
+  .muxed_a(muxed_a),
+  .muxed_b(muxed_b)
 );
 
 endmodule
