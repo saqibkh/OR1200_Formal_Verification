@@ -87,7 +87,6 @@ analyze -sv ../tb/SVA_ctrl.sv
 analyze -sv ../tb/SVA_dc_fsm.sv
 analyze -sv ../tb/SVA_genpc.sv
 analyze -sv ../tb/SVA_operandmuxes.sv
-#analyze -sv ../tb/SVA_qmem_top.sv
 analyze -sv ../tb/SVA_if.sv
 analyze -sv ../tb/SVA_except.sv
 

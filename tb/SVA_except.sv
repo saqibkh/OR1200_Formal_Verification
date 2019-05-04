@@ -95,10 +95,10 @@ property priority_check1;
 endproperty
 assert_priority_check1: assert property (priority_check1);
 
-property priority_check2;
-@(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[2]) |-> ##1 (acc_except_2);
-endproperty
-assert_priority_check2: assert property (priority_check2);
+//property priority_check2;
+//@(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[2]) |-> ##1 (acc_except_2);
+//endproperty
+//assert_priority_check2: assert property (priority_check2);
 
 property priority_check3;
 @(posedge clk) disable iff(reset) (state == OR1200_EXCEPTFSM_IDLE && except_trig[3]) |-> ##1 (acc_except_3);
@@ -230,7 +230,6 @@ endproperty
 assert_property_except_handler_2: assert property (except_handler_2);
 
 cover_EXCEPT_TRAP: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_TRAP));
-cover_EXCEPT_FLOAT: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_FLOAT));
 cover_EXCEPT_SYSCALL: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_SYSCALL));
 cover_EXCEPT_RANGE: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_RANGE));
 cover_EXCEPT_ITLBMISS: cover property(@(posedge clk) (except_type == OR1200_EXCEPT_ITLBMISS));
