@@ -66,23 +66,21 @@ localparam [2:0] OR1200_DC_FSM_IDLE	=	3'd0,
 
 //assert property (@(posedge clk or rst) rst |=> (state == OR1200_DCFSM_IDLE));
 
-assert_property_DC_FSM_CLOADSTORE: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_IDLE), (dc_en && dcqmem_cycstb_i), (state == OR1200_DC_FSM_CLOADSTORE)));
+assert_property_DC_FSM_CLOADSTORE: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_IDLE), (dc_en && dcqmem_cycstb_i), (state == OR1200_DC_FSM_FLUSH5 || state == OR1200_DC_FSM_CLOADSTORE)));
 
 assert_property_DC_FSM_FLUSH5: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_IDLE), (dc_en && (dc_block_flush || dc_block_writeback)), (state == OR1200_DC_FSM_FLUSH5)));
 
 assert_property_DC_FSM_LOOP2_1: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_CLOADSTORE), (hitmiss_eval && tagcomp_miss && !(store && writethrough) && !dcqmem_ci_i), (state == OR1200_DC_FSM_LOOP2)));
 
-assert_property_DC_FSM_IDLE: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_IDLE), (!dcqmem_cycstb_i || (!hitmiss_eval && (biudata_valid || biudata_error)) || (hitmiss_eval && !tagcomp_miss && !dcqmem_ci_i && !(store && writethrough))), (state == OR1200_DC_FSM_IDLE)));
+assert_property_DC_FSM_INV6: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_FLUSH5), (hitmiss_eval && tag_v && cache_spr_block_flush && !dirty), (state == OR1200_DC_FSM_INV6)));
 
-assert_property_DC_FSM_INV6: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_FLUSH5), (hitmiss_eval && !tag_v && cache_spr_block_flush && !dirty), (state == OR1200_DC_FSM_INV6)));
-
-assert_property_DC_FSM_LOOP2_2: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_FLUSH5), (hitmiss_eval && !tag_v && (cache_spr_block_flush || cache_spr_block_writeback) && dirty), (state == OR1200_DC_FSM_LOOP2)));
+assert_property_DC_FSM_LOOP2_2: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_FLUSH5), (hitmiss_eval && tag_v && (cache_spr_block_flush || cache_spr_block_writeback) && dirty), (state == OR1200_DC_FSM_LOOP2)));
 
 assert_property_DC_FSM_WAITSPRCS7: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_FLUSH5), (hitmiss_eval && !tag_v && cache_spr_block_writeback && !dirty), (state == OR1200_DC_FSM_WAITSPRCS7)));
 
 assert_property_DC_FSM_LOOP3: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP2), (biudata_valid && !(cnt)), (state == OR1200_DC_FSM_LOOP3)));
 
-assert_property_DC_FSM_IDLE_2: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP2), (!dc_en | biudata_error), (state == OR1200_DC_FSM_IDLE)));
+//assert_property_DC_FSM_IDLE_2: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP2), (!dc_en | biudata_error), (state == OR1200_DC_FSM_IDLE)));
 
 assert_property_DC_FSM_IDLE_3: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_INV6), (!spr_cswe), (state == OR1200_DC_FSM_IDLE)));
 
@@ -90,9 +88,9 @@ assert_property_DC_FSM_IDLE_4: assert property (FSMValidTransition(clk, (state =
 
 assert_property_DC_FSM_LOOP2_3: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP3), (cache_dirty_needs_writeback), (state == OR1200_DC_FSM_LOOP2)));
 
-assert_property_DC_FSM_LOOP4: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP3), (!cache_dirty_needs_writeback), (state == OR1200_DC_FSM_LOOP4)));
+//assert_property_DC_FSM_LOOP4: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP3), (!cache_dirty_needs_writeback), (state == OR1200_DC_FSM_LOOP4)));
 
-assert_property_DC_FSM_WAITSPRCS7_2: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP3), (cache_spr_block_flush || cache_spr_block_writeback), (state == OR1200_DC_FSM_WAITSPRCS7)));
+//assert_property_DC_FSM_WAITSPRCS7_2: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP3), (cache_spr_block_flush | cache_spr_block_writeback), (state == OR1200_DC_FSM_WAITSPRCS7)));
 
 assert_property_DC_FSM_IDLE_5: assert property (FSMValidTransition(clk, (state == OR1200_DC_FSM_LOOP4), (!spr_cswe), (state == OR1200_DC_FSM_IDLE)));
 
