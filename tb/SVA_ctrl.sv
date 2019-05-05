@@ -76,12 +76,89 @@ module SVA_ctrl (
   input                                	     		ex_delayslot_nop
 );
 
+localparam [1:0] OR1200_SEL_RF = 2'd0,
+                 OR1200_SEL_IMM = 2'd1,
+                 OR1200_SEL_EX_FORW = 2'd2,
+                 OR1200_SEL_WB_FORW = 2'd3;
+
 //Instructions in EX stage
 property ex_delayslot1;
   @(posedge clk) disable iff (rst) (!ex_freeze & ex_delayslot_dsi & !ex_delayslot_nop) |-> ##1 (ex_delayslot_nop == 0 && ex_delayslot_dsi == 0);
 endproperty
-assert property (ex_delayslot1);
+assert_property_ex_delayslot1: assert property (ex_delayslot1);
 
+// l.macrc in EX stage
+property macrc_EX;
+  @(posedge clk) disable iff (rst) (!ex_freeze & id_freeze | ex_flushpipe) |-> ##1 (ex_macrc_op == 0);
+endproperty
+assert_property_macrc_EX: assert property (macrc_EX);
+
+property rf_address;
+  @(posedge clk) disable iff (rst) (!ex_freeze & id_freeze) |-> ##1 (rf_addrw == 5'd00);
+endproperty
+assert_property_rf_address: assert property (rf_address);
+
+property id_instruction;
+  @(posedge clk) disable iff (rst) (id_flushpipe) |-> ##1 (id_insn == {`OR1200_OR32_NOP, 26'h041_0000});
+endproperty
+assert_property_id_instruction: assert property (id_instruction);
+
+property ex_instruction;
+  @(posedge clk) disable iff (rst) (!ex_freeze & id_freeze | ex_flushpipe) |-> ##1 (ex_insn == {`OR1200_OR32_NOP, 26'h041_0000});
+endproperty
+assert_property_ex_instruction: assert property (ex_instruction);
+
+
+property sel_imm_JALR;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_JALR) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_JALR: assert property (sel_imm_JALR);
+
+property sel_imm_JR;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_JR) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_JR: assert property (sel_imm_JR);
+
+property sel_imm_RFE;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_RFE) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_RFE: assert property (sel_imm_RFE);
+
+property sel_imm_MFSPR;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_MFSPR) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_MFSPR: assert property (sel_imm_MFSPR);
+
+property sel_imm_MTSPR;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_MTSPR) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_MTSPR: assert property (sel_imm_MTSPR); 
+
+
+property sel_imm_XSYNC;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_XSYNC) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_XSYNC: assert property (sel_imm_XSYNC);
+
+property sel_imm_SW;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_SW) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_SW: assert property (sel_imm_SW);
+
+property sel_imm_SB;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_SB) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_SB: assert property (sel_imm_SB);
+
+property sel_imm_ALU;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_ALU) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_ALU: assert property (sel_imm_ALU);
+
+property sel_imm_SFXX;
+  @(posedge clk) disable iff (rst) (!id_freeze && if_insn[31:26] == `OR1200_OR32_SFXX) |-> ##1 (sel_imm ==  1'b0);
+endproperty
+assert_property_sel_imm_SFXX: assert property (sel_imm_SFXX);
 
 endmodule
 
